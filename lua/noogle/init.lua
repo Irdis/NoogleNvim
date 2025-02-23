@@ -56,12 +56,7 @@ end
 
 M.run_in_buf = function(cmd)
     print(cmd)
-    local output = vim.api.nvim_exec2("!" .. cmd, { output = true }).output
-    local lines = vim.split(output, "\n");
-
-    table.remove(lines, 1)
-    table.remove(lines, 1)
-    table.remove(lines)
+    local lines = vim.fn.systemlist(cmd)
 
     for i, line in ipairs(lines) do
         lines[i] = string.sub(line, 1, -2) 
