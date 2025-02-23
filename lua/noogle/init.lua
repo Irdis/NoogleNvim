@@ -79,6 +79,9 @@ M.build_cmd = function(location, args)
     if args ~= "" then
         cmd = cmd .. " " .. args
     end
+    if string.find(location, " ") then
+        location = "\"" .. location .. "\"";
+    end
     cmd = cmd .. " " .. "-p " .. location
     return cmd
 end
@@ -130,7 +133,6 @@ M.get_csproj = function(location, root)
     local directory = vim.fn.fnamemodify(location, ":h")
 
     if directory == location then
-        M.log("Unable to locate .csproj")
         return nil
     end
 
@@ -149,10 +151,14 @@ M.get_csproj = function(location, root)
         end
     end
     if directory == root then 
-        M.log("Unable to locate .csproj")
         return nil
     end
     return M.get_csproj(directory, root)
+end
+
+
+M.log = function(msg)
+    print("[noogle] " .. msg)
 end
 
 return M
