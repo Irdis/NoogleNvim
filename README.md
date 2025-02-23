@@ -1,1 +1,1 @@
-Nvim plugin for [Noogle](!https://github.com/Irdis/noogle)
+Nvim plugin for [Noogle](https://github.com/Irdis/noogle)
