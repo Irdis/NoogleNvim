@@ -33,25 +33,37 @@ M.run = function(configuration, options)
         options = {}
     end
 
-    M.buf = vim.api.nvim_get_current_buf()
+    local buf = vim.api.nvim_get_current_buf()
+    
+    local directory = M.get_directory(buf, configuration)
+    if not directory then
+        return
+    end
 
-    local file_path = vim.api.nvim_buf_get_name(M.buf)
+    local cmd = M.build_cmd(directory, options.args)
+    local scratch_buf = M.run_in_buf(cmd)
+    vim.b[scratch_buf].noogle_dir = directory;
+end
+
+M.get_directory = function(buf, configuration)
+    if vim.b[buf].noogle_dir then 
+        return vim.b[buf].noogle_dir
+    end
+    local file_path = vim.api.nvim_buf_get_name(buf)
     local root_folder = vim.loop.cwd()
     local csproj = M.get_csproj(file_path, root_folder)
     if not csproj then 
         M.log("Unable to locate .csproj")
-        return
+        return nil
     end
 
     local dll = M.get_dll(csproj, configuration)
     if not dll then 
         M.log("Unable to locate .dll")
-        return
+        return nil
     end
     local directory = vim.fn.fnamemodify(dll, ":h")
-
-    local cmd = M.build_cmd(directory, options.args)
-    M.run_in_buf(cmd)
+    return directory 
 end
 
 M.run_in_buf = function(cmd)
@@ -59,13 +71,19 @@ M.run_in_buf = function(cmd)
     local lines = vim.fn.systemlist(cmd)
 
     for i, line in ipairs(lines) do
-        lines[i] = string.sub(line, 1, -2) 
+        local outline = string.sub(line, 1, -2) 
+        if string.find(outline, "\n") then
+            M.log("Found new line in output: " .. outline)
+            outline = outline:gsub("\n", "<CR>")
+        end
+        lines[i] = outline
     end
     local buf = vim.api.nvim_create_buf(false, true) 
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
     vim.api.nvim_command("split")
     vim.api.nvim_set_current_buf(buf)
+    return buf
 end
 
 M.build_cmd = function(location, args)
