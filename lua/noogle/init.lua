@@ -3,7 +3,7 @@ local M = {}
 M.noogle_path = "noogle";
 
 M.setup = function()
-    vim.api.nvim_create_user_command("Noogle", 
+    vim.api.nvim_create_user_command("Noogle",
         M.run_cmd,
         {
             nargs = "*",
@@ -38,13 +38,13 @@ M.run = function(configuration, options)
     local file_path = vim.api.nvim_buf_get_name(M.buf)
     local root_folder = vim.loop.cwd()
     local csproj = M.get_csproj(file_path, root_folder)
-    if not csproj then 
+    if not csproj then
         M.log("Unable to locate .csproj")
         return
     end
 
     local dll = M.get_dll(csproj, configuration)
-    if not dll then 
+    if not dll then
         M.log("Unable to locate .dll")
         return
     end
@@ -54,14 +54,18 @@ M.run = function(configuration, options)
     M.run_in_buf(cmd)
 end
 
+M.normalize_path = function(path)
+    return path:gsub("/", "\\")
+end
+
 M.run_in_buf = function(cmd)
     print(cmd)
     local lines = vim.fn.systemlist(cmd)
 
     for i, line in ipairs(lines) do
-        lines[i] = string.sub(line, 1, -2) 
+        lines[i] = string.sub(line, 1, -2)
     end
-    local buf = vim.api.nvim_create_buf(false, true) 
+    local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
     vim.api.nvim_command("split")
@@ -88,7 +92,7 @@ M.get_dll = function(csproj, configuration)
     local initial_folder = csproj_folder .. "\\bin\\" .. configuration
     local dll_path = M.look_for_dll(dll_name, initial_folder)
 
-    return dll_path
+    return M.normalize_path(dll_path)
 end
 
 M.look_for_dll = function(dll_name, directory)
@@ -108,7 +112,7 @@ M.look_for_dll_int = function(dll_name, directory)
 
         if not name then break end
 
-        if type == "file" and string.lower(name) == dll_name then 
+        if type == "file" and string.lower(name) == dll_name then
             return directory .. "\\" .. name
         elseif type == "directory" then
             table.insert(inner_dirs, directory .. "\\" .. name)
@@ -117,7 +121,7 @@ M.look_for_dll_int = function(dll_name, directory)
 
     for _, inner_dir in ipairs(inner_dirs) do
         local found = M.look_for_dll_int(dll_name, inner_dir)
-        if found then 
+        if found then
             return found
         end
     end
@@ -141,11 +145,11 @@ M.get_csproj = function(location, root)
 
         if not name then break end
 
-        if type == "file" and string.match(name, "%.csproj$") then 
+        if type == "file" and string.match(name, "%.csproj$") then
             return directory .. "\\" .. name
         end
     end
-    if directory == root then 
+    if directory == root then
         return nil
     end
     return M.get_csproj(directory, root)
