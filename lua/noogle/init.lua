@@ -2,7 +2,7 @@ local M = {}
 
 M.noogle_path = "noogle";
 
-M.setup = function()
+M.setup = function(config)
     vim.api.nvim_create_user_command("Noogle",
         M.run_cmd,
         {
