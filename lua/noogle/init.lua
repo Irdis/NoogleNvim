@@ -34,7 +34,7 @@ M.run = function(configuration, options)
     end
 
     local buf = vim.api.nvim_get_current_buf()
-    
+
     local directory = M.get_directory(buf, configuration)
     if not directory then
         return
@@ -46,7 +46,7 @@ M.run = function(configuration, options)
 end
 
 M.get_directory = function(buf, configuration)
-    if vim.b[buf].noogle_dir then 
+    if vim.b[buf].noogle_dir then
         return vim.b[buf].noogle_dir
     end
     local file_path = vim.api.nvim_buf_get_name(buf)
@@ -63,7 +63,7 @@ M.get_directory = function(buf, configuration)
         return nil
     end
     local directory = vim.fn.fnamemodify(dll, ":h")
-    return directory 
+    return directory
 end
 
 M.normalize_path = function(path)
