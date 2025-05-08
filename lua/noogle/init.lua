@@ -78,6 +78,7 @@ M.run_in_buf = function(cmd)
         lines[i] = string.sub(line, 1, -2)
     end
     local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_option(buf, 'filetype', 'noogle')
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
     vim.api.nvim_command("split")
