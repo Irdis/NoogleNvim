@@ -67,6 +67,7 @@ M.get_directory = function(buf, configuration)
 end
 
 M.normalize_path = function(path)
+    if path == nil then return end
     return path:gsub("/", "\\")
 end
 
