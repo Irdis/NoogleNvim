@@ -105,7 +105,7 @@ end
 M.add_paths = function (location)
     local res = location
     for _, addional_loc in ipairs(M.additional_locations) do
-        res = res .. "," .. addional_loc
+        res = res .. ";" .. addional_loc
     end
     return res
 end
