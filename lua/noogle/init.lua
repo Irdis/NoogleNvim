@@ -1,6 +1,7 @@
 local M = {}
 
 M.noogle_path = "noogle";
+M.additional_locations = {}
 
 M.setup = function(config)
     vim.api.nvim_create_user_command("Noogle",
@@ -13,6 +14,9 @@ M.setup = function(config)
     end
     if config.noogle_path then
         M.noogle_path = config.noogle_path
+    end
+    if config.additional_locations then
+        M.additional_locations = config.additional_locations
     end
 end
 
@@ -93,11 +97,24 @@ M.build_cmd = function(location, args)
     if args ~= "" then
         cmd = cmd .. " " .. args
     end
-    if string.find(location, " ") then
-        location = "\"" .. location .. "\"";
-    end
+    location = M.escape_arg(M.add_paths(location))
     cmd = cmd .. " " .. "-p " .. location
     return cmd
+end
+
+M.add_paths = function (location)
+    local res = location
+    for _, addional_loc in ipairs(M.additional_locations) do
+        res = res .. "," .. addional_loc
+    end
+    return res
+end
+
+M.escape_arg = function(str)
+    if str:find(' ') then
+        return '"' .. str .. '"'
+    end
+    return str
 end
 
 M.get_dll = function(csproj, configuration)
