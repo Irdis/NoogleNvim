@@ -76,7 +76,7 @@ M.normalize_path = function(path)
 end
 
 M.run_in_buf = function(cmd)
-    print(cmd)
+    -- print(cmd)
     local lines = vim.fn.systemlist(cmd)
 
     for i, line in ipairs(lines) do
