@@ -118,10 +118,19 @@ M.escape_arg = function(str)
 end
 
 M.get_dll = function(csproj, configuration)
+
     local csproj_folder = vim.fn.fnamemodify(csproj, ":h")
     local csproj_name_noext = vim.fn.fnamemodify(csproj, ":t:r")
     local dll_name = csproj_name_noext .. ".dll"
     local initial_folder = csproj_folder .. "\\bin\\" .. configuration
+
+    if vim.loop.fs_stat(initial_folder) == nil then
+        initial_folder = csproj_folder .. "\\bin"
+    end
+    if vim.loop.fs_stat(initial_folder) == nil then
+        M.log("Unable to locate bin directory")
+        return
+    end
     local dll_path = M.look_for_dll(dll_name, initial_folder)
 
     return M.normalize_path(dll_path)
