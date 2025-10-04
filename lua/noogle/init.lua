@@ -5,7 +5,6 @@ M.additional_locations = {}
 
 M.build = function()
     if M.noogle_exist_and_version_match() then
-        M.log('noogle_exist_and_version_match1')
         return
     end
     local net_dir = M.get_net_dir()
@@ -35,7 +34,6 @@ end
 M.noogle_exist_and_version_match = function ()
     local noogle_path = M.get_noogle_path()
     if not M.file_exists(noogle_path) then
-        M.log("nofile " .. noogle_path)
         return false
     end
 
@@ -43,7 +41,6 @@ M.noogle_exist_and_version_match = function ()
 
     local original_version_file = net_dir .. '/bin/version'
     if not M.file_exists(original_version_file) then
-        M.log("nofile 1" .. original_version_file)
         return false
     end
 
@@ -51,9 +48,6 @@ M.noogle_exist_and_version_match = function ()
 
     local new_version_file = net_dir .. '/version'
     local new_version = vim.fn.readfile(new_version_file)
-
-    print(vim.inspect(original_version))
-    print(vim.inspect(new_version))
 
     return original_version[1] == new_version[1]
 end
