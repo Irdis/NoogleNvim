@@ -40,6 +40,7 @@ M.get_net_dir = function ()
 end
 
 M.setup = function(config)
+    M.setup_grammar()
     M.noogle_path = M.get_noogle_path()
     vim.api.nvim_create_user_command("Noogle", M.run_cmd, { nargs = "*", })
     if not config then
@@ -51,6 +52,20 @@ M.setup = function(config)
     if config.additional_locations then
         M.additional_locations = config.additional_locations
     end
+end
+
+M.setup_grammar = function ()
+    local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+    parser_config.noogle = {
+        install_info = {
+            url = "https://github.com/Irdis/tree-sitter-noogle.git",
+            -- url = "C:\\Projects\\tree-sitter-noogle",
+            files = {"src/parser.c"},
+            branch = "main",
+            generate_requires_npm = true,
+        },
+        filetype = "noog",
+    }
 end
 
 M.run_cmd = function(args)
