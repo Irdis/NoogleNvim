@@ -84,7 +84,7 @@ public class Program
             return;
         var outStat = new ConcurrentBag<(string, int)>();
         await Task.WhenAll(libs.Select(async path => {
-            try 
+            try
             {
                 await using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
                 using var peFile = new PEFile(path, fs);
@@ -137,7 +137,7 @@ public class Program
 
     private static void ExploreType(
         TypeInfo typeInfo,
-        IType targetType, 
+        IType targetType,
         NoogleArgs args,
         Stat stat,
         StringBuilder sb
@@ -152,8 +152,8 @@ public class Program
         PrintTypeInfo(targetType, typeInfo, stat, sb);
     }
 
-    private static void CollectTypeInfo(TypeInfo info, 
-        IType currentType, 
+    private static void CollectTypeInfo(TypeInfo info,
+        IType currentType,
         NoogleArgs args)
     {
         if (args.CtorsOnly)
@@ -219,19 +219,19 @@ public class Program
                 ind++;
                 res.Paths = args[ind].Split(';', StringSplitOptions.None);
                 ind++;
-            } 
+            }
             else if (arg == "-l" && ind < args.Length - 1)
             {
                 ind++;
                 res.Lib = args[ind];
                 ind++;
-            } 
+            }
             else if (arg == "-t" && ind < args.Length - 1)
             {
                 ind++;
                 res.Type = LongType(args[ind]);
                 ind++;
-            } 
+            }
             else if (arg == "-m" && ind < args.Length - 1)
             {
                 ind++;
@@ -242,28 +242,28 @@ public class Program
             {
                 ind++;
                 res.CtorsOnly = true;
-            } 
+            }
             else if (arg == "-a")
             {
                 ind++;
                 res.PublicOnly = false;
-            } 
+            }
             else if (arg == "-i")
             {
                 ind++;
                 res.IncludeInherited = true;
-            } 
+            }
             else if (arg == "-s")
             {
                 ind++;
                 res.Stat = true;
-            } 
+            }
             else if (arg == "-?")
             {
                 PrintUsage(Console.Out);
                 return false;
-            } 
-            else 
+            }
+            else
             {
                 PrintInvalidArgs();
                 return false;
@@ -296,7 +296,7 @@ public class Program
                 {
                     res.Add(filePath);
                     break;
-                } 
+                }
             }
             return res;
         }
@@ -390,7 +390,7 @@ public class Program
         IType type,
         IField field,
         StringBuilder sb
-    ) 
+    )
     {
         sb.Append(type.FullName);
         sb.Append(" ");
@@ -420,7 +420,7 @@ public class Program
         sb.Append(" ");
         sb.Append(Access(property.Accessibility));
         sb.Append(" ");
-        if (property.IsStatic) 
+        if (property.IsStatic)
         {
             sb.Append("static");
             sb.Append(" ");
@@ -472,7 +472,7 @@ public class Program
         sb.Append(" ");
         sb.Append(Access(method.Accessibility));
         sb.Append(" ");
-        if (method.IsStatic) 
+        if (method.IsStatic)
         {
             sb.Append("static");
             sb.Append(" ");
@@ -525,11 +525,11 @@ public class Program
         if (val is char)
         {
             return string.Format("'{0}'", ToCharLiteral((char)val));
-        } 
+        }
         else if (val is string)
         {
             return string.Format("\"{0}\"", ToStringLiteral((string) val));
-        } 
+        }
         else if (val is bool)
         {
             return (bool)val ? "true" : "false";
