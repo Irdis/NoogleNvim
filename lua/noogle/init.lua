@@ -4,6 +4,10 @@ M.noogle_path = nil
 M.additional_locations = {}
 
 M.build = function()
+    if M.noogle_exist_and_version_match() then
+        M.log('noogle_exist_and_version_match')
+        return
+    end
     local net_dir = M.get_net_dir()
     local has_dotnet = vim.fn.executable('dotnet') == 1
 
@@ -26,6 +30,27 @@ M.build = function()
         end
         M.log('noogle binary built successfully!')
     end)
+end
+
+M.noogle_exist_and_version_match = function ()
+    local noogle_path = M.get_noogle_path()
+    if not M.file_exists(noogle_path) then
+        return false
+    end
+
+    local net_dir = M.get_net_dir()
+
+    local original_version_file = net_dir .. '/bin/version'
+    if not M.file_exists(original_version_file) then
+        return false
+    end
+
+    local original_version = vim.fn.readfile(original_version_file)
+
+    local new_version_file = net_dir .. '/version'
+    local new_version = vim.fn.readfile(new_version_file)
+
+    return original_version == new_version
 end
 
 M.get_noogle_path = function ()
