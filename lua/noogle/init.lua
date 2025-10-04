@@ -5,7 +5,7 @@ M.additional_locations = {}
 
 M.build = function()
     if M.noogle_exist_and_version_match() then
-        M.log('noogle_exist_and_version_match')
+        M.log('noogle_exist_and_version_match1')
         return
     end
     local net_dir = M.get_net_dir()
