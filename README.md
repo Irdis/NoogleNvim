@@ -1,7 +1,7 @@
 # NoogleNvim
 
 A Neovim plugin that lets you quickly search and explore types and methods in .NET libraries. Noogle scans `bin` folder with [ILSpy](https://github.com/icsharpcode/ILSpy) and outputs methods and properties signatures of matching classes.
-<img width="1324" height="669" alt="image" src="https://github.com/user-attachments/assets/c6356924-d0ee-4c26-8c7d-344b7d6c5ef5" />
+<img width="1320" height="665" alt="image" src="https://github.com/user-attachments/assets/bace7a0e-aa44-43d9-b8fd-c7acca6bff76" />
 
 ## Installation
 
