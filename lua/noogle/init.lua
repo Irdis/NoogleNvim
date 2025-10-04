@@ -41,9 +41,6 @@ end
 
 M.setup = function(config)
     M.noogle_path = M.get_noogle_path()
-    if not M.file_exists(M.noogle_path) then
-        M.build()
-    end
     vim.api.nvim_create_user_command("Noogle", M.run_cmd, { nargs = "*", })
     if not config then
         return
