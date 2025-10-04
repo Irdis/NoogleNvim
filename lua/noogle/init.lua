@@ -1,14 +1,50 @@
 local M = {}
 
-M.noogle_path = "noogle";
+M.noogle_path = nil
 M.additional_locations = {}
 
+M.build = function()
+    local net_dir = M.get_net_dir()
+    local has_dotnet = vim.fn.executable('dotnet') == 1
+
+    if not has_dotnet then
+        M.log(
+            'dotnet is not found. It is required to build the noogle binary. Install it from https://dotnet.microsoft.com/en-us/download'
+        )
+        return
+    end
+    M.log('Building, please wait...')
+    vim.system({ 'build.bat' }, { cwd = net_dir }, function(result)
+        if result.code ~= 0 then
+            M.log('Failed to build dotnet binary: ' .. (result.stdout or 'unknown error'))
+            return
+        end
+        local noogle_path = M.get_noogle_path()
+        if not M.file_exists(noogle_path) then
+            M.log('Unknown error, noogle binary was not found ' .. noogle_path)
+            return
+        end
+        M.log('noogle binary built successfully!')
+    end)
+end
+
+M.get_noogle_path = function ()
+    local net_dir = M.get_net_dir()
+    return net_dir .. '/bin/noogle.exe'
+end
+
+M.get_net_dir = function ()
+    local plugin_dir = vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':h:h')
+    local net_dir = plugin_dir .. '/../net'
+    return net_dir
+end
+
 M.setup = function(config)
-    vim.api.nvim_create_user_command("Noogle",
-        M.run_cmd,
-        {
-            nargs = "*",
-        })
+    M.noogle_path = M.get_noogle_path()
+    if not M.file_exists(M.noogle_path) then
+        M.build()
+    end
+    vim.api.nvim_create_user_command("Noogle", M.run_cmd, { nargs = "*", })
     if not config then
         return
     end
@@ -124,10 +160,10 @@ M.get_dll = function(csproj, configuration)
     local dll_name = csproj_name_noext .. ".dll"
     local initial_folder = csproj_folder .. "\\bin\\" .. configuration
 
-    if vim.loop.fs_stat(initial_folder) == nil then
+    if M.folder_exists(initial_folder) == nil then
         initial_folder = csproj_folder .. "\\bin"
     end
-    if vim.loop.fs_stat(initial_folder) == nil then
+    if M.folder_exists(initial_folder) == nil then
         M.log("Unable to locate bin directory")
         return
     end
@@ -196,6 +232,13 @@ M.get_csproj = function(location, root)
     return M.get_csproj(directory, root)
 end
 
+M.file_exists = function (path)
+    return vim.loop.fs_stat(path) ~= nil
+end
+
+M.folder_exists = function (path)
+    return vim.loop.fs_stat(path) ~= nil
+end
 
 M.log = function(msg)
     print("[noogle] " .. msg)
