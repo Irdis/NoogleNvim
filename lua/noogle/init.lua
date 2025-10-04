@@ -35,6 +35,7 @@ end
 M.noogle_exist_and_version_match = function ()
     local noogle_path = M.get_noogle_path()
     if not M.file_exists(noogle_path) then
+        M.log("nofile " .. noogle_path)
         return false
     end
 
@@ -42,6 +43,7 @@ M.noogle_exist_and_version_match = function ()
 
     local original_version_file = net_dir .. '/bin/version'
     if not M.file_exists(original_version_file) then
+        M.log("nofile " .. original_version_file)
         return false
     end
 
