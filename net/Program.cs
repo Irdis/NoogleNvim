@@ -300,26 +300,34 @@ public class Program
             }
             return res;
         }
-        var ignoreList = GetIgnoreList();
+        var ignoreList = GetIgnoreList(args.Paths[0]);
         foreach (var filePath in files)
         {
             var fileName = Path.GetFileName(filePath);
-            if (filePath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) &&
-                !ignoreList.IsMatch(fileName))
-            {
-                res.Add(filePath);
-            } 
+
+            if (!filePath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (ignoreList != null && ignoreList.IsMatch(fileName))
+                continue;
+
+            res.Add(filePath);
         }
         return res;
     }
 
-    private static Regex GetIgnoreList()
+    private static Regex GetIgnoreList(string searchPath)
     {
-        var exePath = AppDomain.CurrentDomain.BaseDirectory;
-        var exeDir = Path.GetDirectoryName(exePath);
-        var ignoreFile = Path.Combine(exeDir, ".noogleignore");
-        var expr = string.Join('|', File.ReadAllLines(ignoreFile).Where(s => !string.IsNullOrEmpty(s)));
-        return new Regex(expr);
+        var ignoreFile = Path.Combine(searchPath, ".noogleignore");
+        if (File.Exists(ignoreFile))
+        {
+            var expr = string.Join('|', File.ReadAllLines(ignoreFile).Where(s => !string.IsNullOrEmpty(s)));
+            return new Regex(expr);
+        }
+        var parent = Directory.GetParent(searchPath);
+        if (parent == null)
+            return null;
+        return GetIgnoreList(parent.FullName);
     }
 
     private static void PrintInvalidArgs()
