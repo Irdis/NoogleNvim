@@ -18,8 +18,10 @@ module.exports = grammar({
     source_file: $ => repeat($.definition),
     definition: $ => seq($.path, $.signature, "\n"),
     path: $ => seq(
-      field("namespace", $.namespace_part), 
-      ".", 
+      optional(seq(
+          field("namespace", $.namespace_part), 
+          "."
+      )), 
       field("class", $.identifier)),
 
     namespace_part: $ => choice(

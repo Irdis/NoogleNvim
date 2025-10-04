@@ -41,8 +41,16 @@ end
 
 M.setup = function(config)
     M.setup_grammar()
+
     M.noogle_path = M.get_noogle_path()
+
     vim.api.nvim_create_user_command("Noogle", M.run_cmd, { nargs = "*", })
+
+    vim.api.nvim_create_user_command("NoogleType", M.noogle_type, { nargs = "*", })
+    vim.api.nvim_create_user_command("NoogleTypeExt", M.noogle_type_ext, { nargs = "*", })
+    vim.api.nvim_create_user_command("NoogleMethod", M.noogle_method, { nargs = "*", })
+    vim.api.nvim_create_user_command("NoogleMethodExt", M.noogle_method_ext, { nargs = "*", })
+
     if not config then
         return
     end
@@ -66,6 +74,22 @@ M.setup_grammar = function ()
         },
         filetype = "noog",
     }
+end
+
+M.noogle_type = function (args)
+    M.run_cmd({ args = '-t ' .. args.args })
+end
+
+M.noogle_type_ext = function (args)
+    M.run_cmd({ args = '-i -a -t ' .. args.args})
+end
+
+M.noogle_method = function (args)
+    M.run_cmd({ args = '-m ' .. args.args })
+end
+
+M.noogle_method_ext = function (args)
+    M.run_cmd({ args = '-i -a -m ' .. args.args})
 end
 
 M.run_cmd = function(args)
