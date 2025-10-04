@@ -50,6 +50,9 @@ M.noogle_exist_and_version_match = function ()
     local new_version_file = net_dir .. '/version'
     local new_version = vim.fn.readfile(new_version_file)
 
+    print(vim.inspect(original_version))
+    print(vim.inspect(new_version))
+
     return original_version[1] == new_version[1]
 end
 
