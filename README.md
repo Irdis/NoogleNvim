@@ -4,7 +4,7 @@ A Neovim plugin that lets you quickly search and explore types and methods in .N
 
 ## Installation
 
-Lazy:
+### lazy.nvim:
 ``` lua
 {
     "Irdis/NoogleNvim",
