@@ -11,9 +11,8 @@ M.build = function()
     local has_dotnet = vim.fn.executable('dotnet') == 1
 
     if not has_dotnet then
-        M.log(
-            'dotnet is not found. It is required to build the noogle binary. Install it from https://dotnet.microsoft.com/en-us/download'
-        )
+        M.log('dotnet is not found. It is required to build the noogle binary. ' ..
+            'Install it from https://dotnet.microsoft.com/en-us/download')
         return
     end
     M.log('Building, please wait...')
@@ -214,7 +213,6 @@ M.escape_arg = function(str)
 end
 
 M.get_dll = function(csproj, configuration)
-
     local csproj_folder = vim.fn.fnamemodify(csproj, ":h")
     local csproj_name_noext = vim.fn.fnamemodify(csproj, ":t:r")
     local dll_name = csproj_name_noext .. ".dll"
