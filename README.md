@@ -29,7 +29,7 @@ User commands:
 - `:NoogleType <query>` - Searches through public classes only
 - `:NoogleTypeExt <query>` - Searches classes of all access levels (public, private, protected, etc.)
 - `:NoogleMethod <query>` - Searches through public methods only
-- `:NoogleMethodExt <query>` - Searches mehtods of all access levels (public, private, protected, etc.)
+- `:NoogleMethodExt <query>` - Searches methods of all access levels (public, private, protected, etc.)
 
 ## Configuration
 
