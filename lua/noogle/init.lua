@@ -218,12 +218,11 @@ M.get_dll = function(csproj, configuration)
     local dll_name = csproj_name_noext .. ".dll"
     local initial_folder = csproj_folder .. "\\bin\\" .. configuration
 
-    if M.folder_exists(initial_folder) == nil then
+    if not M.folder_exists(initial_folder) then
         initial_folder = csproj_folder .. "\\bin"
     end
-    if M.folder_exists(initial_folder) == nil then
-        M.log("Unable to locate bin directory")
-        return
+    if not M.folder_exists(initial_folder) then
+        return nil
     end
     local dll_path = M.look_for_dll(dll_name, initial_folder)
 
