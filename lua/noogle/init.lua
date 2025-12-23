@@ -86,7 +86,7 @@ M.setup = function(config)
 end
 
 M.setup_grammar = function ()
-    local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+    local parser_config = require("nvim-treesitter.parsers")
     parser_config.noogle = {
         install_info = {
             url = "https://github.com/Irdis/NoogleNvim.git",
