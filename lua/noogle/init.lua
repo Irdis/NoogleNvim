@@ -86,18 +86,23 @@ M.setup = function(config)
 end
 
 M.setup_grammar = function ()
-    local parser_config = require("nvim-treesitter.parsers")
-    parser_config.noogle = {
-        install_info = {
-            url = "https://github.com/Irdis/NoogleNvim.git",
-            -- url = "C:\\Projects\\tree-sitter-noogle",
-            location = 'syntax',
-            -- files = {"syntax/src/parser.c"},
-            branch = "main"
-            -- generate_requires_npm = true,
-        },
-        filetype = "noog",
-    }
+    vim.api.nvim_create_autocmd('User', { 
+        pattern = 'TSUpdate',
+        callback = function()
+            local parser_config = require("nvim-treesitter.parsers")
+            parser_config.noogle = {
+                install_info = {
+                    url = "https://github.com/Irdis/NoogleNvim.git",
+                    -- url = "C:\\Projects\\tree-sitter-noogle",
+                    location = 'syntax',
+                    -- files = {"syntax/src/parser.c"},
+                    branch = "main"
+                    -- generate_requires_npm = true,
+                },
+                filetype = "noog",
+            }
+        end
+    })
 end
 
 M.noogle_type = function (args)
