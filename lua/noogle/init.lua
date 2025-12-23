@@ -91,9 +91,10 @@ M.setup_grammar = function ()
         install_info = {
             url = "https://github.com/Irdis/NoogleNvim.git",
             -- url = "C:\\Projects\\tree-sitter-noogle",
-            files = {"syntax/src/parser.c"},
+            location = 'syntax'
+            -- files = {"syntax/src/parser.c"},
             branch = "main",
-            generate_requires_npm = true,
+            -- generate_requires_npm = true,
         },
         filetype = "noog",
     }
