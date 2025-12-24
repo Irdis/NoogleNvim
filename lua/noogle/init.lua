@@ -91,7 +91,7 @@ M.setup_grammar = function ()
         install_info = {
             url = "https://github.com/Irdis/NoogleNvim.git",
             location = 'syntax',
-            queries = 'queries'
+            queries = 'queries',
             branch = "main"
         },
     }
