@@ -66,9 +66,9 @@ M.get_noogle_path = function ()
     local net_dir = M.get_net_dir()
     net_dir = net_dir .. 'bin/'
     if M.is_linux() then
-        net_dir = 'noogle'
+        net_dir = net_dir .. 'noogle'
     else
-        net_dir = 'noogle.exe'
+        net_dir = net_dir .. 'noogle.exe'
     end
     return net_dir
 end
@@ -194,6 +194,7 @@ M.normalize_path = function(path)
 end
 
 M.run_in_buf = function(cmd)
+    -- print(cmd)
     local lines = vim.fn.systemlist(cmd)
 
     for i, line in ipairs(lines) do
