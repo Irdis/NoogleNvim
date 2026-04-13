@@ -194,7 +194,7 @@ M.normalize_path = function(path)
 end
 
 M.run_in_buf = function(cmd)
-    -- print(cmd)
+    print(cmd)
     local lines = vim.fn.systemlist(cmd)
 
     if not M.is_linux() then
@@ -224,8 +224,18 @@ end
 
 M.add_paths = function (location)
     local res = location
+    local need_quotes = M.is_linux() and #M.additional_locations > 0
+
+    if need_quotes then
+        res = "\"" .. res
+    end
+
     for _, addional_loc in ipairs(M.additional_locations) do
         res = res .. ";" .. addional_loc
+    end
+
+    if need_quotes then
+        res = res .. "\""
     end
     return res
 end
