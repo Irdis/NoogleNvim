@@ -197,8 +197,10 @@ M.run_in_buf = function(cmd)
     -- print(cmd)
     local lines = vim.fn.systemlist(cmd)
 
-    for i, line in ipairs(lines) do
-        lines[i] = string.sub(line, 1, -2)
+    if not M.is_linux() then
+        for i, line in ipairs(lines) do
+            lines[i] = string.sub(line, 1, -2)
+        end
     end
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_option(buf, 'filetype', 'noogle')
