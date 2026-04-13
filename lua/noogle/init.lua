@@ -16,7 +16,13 @@ M.build = function()
         return
     end
     M.log('Building, please wait...')
-    vim.system({ 'build.bat' }, { cwd = net_dir }, function(result)
+    local build_script
+    if M.is_linux() then
+        build_script = 'bash build.sh'
+    else
+        build_script = 'build.bat'
+    end
+    vim.system({ build_script }, { cwd = net_dir }, function(result)
         if result.code ~= 0 then
             M.log('Failed to build dotnet binary: ' .. (result.stdout or 'unknown error'))
             return
@@ -30,6 +36,11 @@ M.build = function()
     end)
 end
 
+M.is_linux = function ()
+    local os_name = vim.loop.os_uname().sysname
+    return os_name == "Linux"
+end
+
 M.noogle_exist_and_version_match = function ()
     local noogle_path = M.get_noogle_path()
     if not M.file_exists(noogle_path) then
@@ -38,14 +49,14 @@ M.noogle_exist_and_version_match = function ()
 
     local net_dir = M.get_net_dir()
 
-    local original_version_file = net_dir .. '/bin/version'
+    local original_version_file = net_dir .. 'bin/version'
     if not M.file_exists(original_version_file) then
         return false
     end
 
     local original_version = vim.fn.readfile(original_version_file)
 
-    local new_version_file = net_dir .. '/version'
+    local new_version_file = net_dir .. 'version'
     local new_version = vim.fn.readfile(new_version_file)
 
     return original_version[1] == new_version[1]
@@ -53,12 +64,18 @@ end
 
 M.get_noogle_path = function ()
     local net_dir = M.get_net_dir()
-    return net_dir .. '/bin/noogle.exe'
+    net_dir = net_dir .. 'bin/'
+    if M.is_linux() then
+        net_dir = 'noogle'
+    else
+        net_dir = 'noogle.exe'
+    end
+    return net_dir
 end
 
 M.get_net_dir = function ()
     local plugin_dir = vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':h:h')
-    local net_dir = plugin_dir .. '/../net'
+    local net_dir = plugin_dir .. '/../net/'
     return net_dir
 end
 
@@ -86,8 +103,8 @@ M.setup = function(config)
 end
 
 M.setup_grammar = function ()
-    vim.api.nvim_create_autocmd('User', 
-    { 
+    vim.api.nvim_create_autocmd('User',
+    {
         pattern = 'TSUpdate',
         callback = function()
             local parser_config = require("nvim-treesitter.parsers")
@@ -170,11 +187,13 @@ end
 
 M.normalize_path = function(path)
     if path == nil then return end
+    if M.is_linux() then
+        return path
+    end
     return path:gsub("/", "\\")
 end
 
 M.run_in_buf = function(cmd)
-    -- print(cmd)
     local lines = vim.fn.systemlist(cmd)
 
     for i, line in ipairs(lines) do
@@ -219,10 +238,10 @@ M.get_dll = function(csproj, configuration)
     local csproj_folder = vim.fn.fnamemodify(csproj, ":h")
     local csproj_name_noext = vim.fn.fnamemodify(csproj, ":t:r")
     local dll_name = csproj_name_noext .. ".dll"
-    local initial_folder = csproj_folder .. "\\bin\\" .. configuration
+    local initial_folder = csproj_folder .. "/bin/" .. configuration
 
     if not M.folder_exists(initial_folder) then
-        initial_folder = csproj_folder .. "\\bin"
+        initial_folder = csproj_folder .. "/bin"
     end
     if not M.folder_exists(initial_folder) then
         return nil
@@ -250,9 +269,9 @@ M.look_for_dll_int = function(dll_name, directory)
         if not name then break end
 
         if type == "file" and string.lower(name) == dll_name then
-            return directory .. "\\" .. name
+            return directory .. "/" .. name
         elseif type == "directory" then
-            table.insert(inner_dirs, directory .. "\\" .. name)
+            table.insert(inner_dirs, directory .. "/" .. name)
         end
     end
 
@@ -283,7 +302,7 @@ M.get_csproj = function(location, root)
         if not name then break end
 
         if type == "file" and string.match(name, "%.csproj$") then
-            return directory .. "\\" .. name
+            return directory .. "/" .. name
         end
     end
     if directory == root then
