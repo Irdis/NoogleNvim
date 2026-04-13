@@ -18,11 +18,11 @@ M.build = function()
     M.log('Building, please wait...')
     local build_script
     if M.is_linux() then
-        build_script = 'bash build.sh'
+        build_script = {'bash', 'build.sh'}
     else
-        build_script = 'build.bat'
+        build_script = {'build.bat'}
     end
-    vim.system({ build_script }, { cwd = net_dir }, function(result)
+    vim.system(build_script, { cwd = net_dir }, function(result)
         if result.code ~= 0 then
             M.log('Failed to build dotnet binary: ' .. (result.stdout or 'unknown error'))
             return
