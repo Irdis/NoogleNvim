@@ -36,6 +36,10 @@ M.build = function()
     end)
 end
 
+M.find_latest_dotnet = function (root_path)
+    return require("noogle/latest_dotnet").get_latest(root_path)
+end
+
 M.is_linux = function ()
     local os_name = vim.loop.os_uname().sysname
     return os_name == "Linux"
@@ -194,7 +198,7 @@ M.normalize_path = function(path)
 end
 
 M.run_in_buf = function(cmd)
-    -- print(cmd)
+    print(cmd)
     local lines = vim.fn.systemlist(cmd)
 
     if not M.is_linux() then
