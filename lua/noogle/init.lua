@@ -36,10 +36,6 @@ M.build = function()
     end)
 end
 
-M.find_latest_dotnet = function (root_path)
-    return require("noogle/latest_dotnet").get_latest(root_path)
-end
-
 M.is_linux = function ()
     local os_name = vim.loop.os_uname().sysname
     return os_name == "Linux"
