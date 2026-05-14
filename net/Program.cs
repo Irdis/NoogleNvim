@@ -29,12 +29,14 @@ public class TypeInfo
     public List<IMethod> Ctors { get; set; } = new ();
     public List<IMethod> Methods { get; set; } = new ();
     public List<IProperty> Props { get; set; } = new ();
+    public List<IEvent> Events { get; set; } = new ();
 
     public void Clear()
     {
         Ctors.Clear();
         Methods.Clear();
         Props.Clear();
+        Events.Clear();
     }
 }
 
@@ -165,6 +167,7 @@ public class Program
         info.Ctors.AddRange(CollectCtors(currentType, args));
         info.Props.AddRange(CollectProperties(currentType, args));
         info.Methods.AddRange(CollectMethods(currentType, args));
+        info.Events.AddRange(CollectEvents(currentType, args));
     }
 
     private static IEnumerable<IMethod> CollectCtors(IType type, NoogleArgs args)
@@ -187,6 +190,16 @@ public class Program
         if (args.PublicOnly)
             props = props.Where(p => p.Accessibility == Accessibility.Public);
         return props;
+    }
+
+    private static IEnumerable<IEvent> CollectEvents(IType type, NoogleArgs args)
+    {
+        IEnumerable<IEvent> events = type.GetEvents(options: MemberOptions(args));
+        if (args.Member != null)
+            events = events.Where(e => e.Name == args.Member);
+        if (args.PublicOnly)
+            events = events.Where(e => e.Accessibility == Accessibility.Public);
+        return events;
     }
 
     private static IEnumerable<IMethod> CollectMethods(IType type, NoogleArgs args)
@@ -369,6 +382,11 @@ public class Program
 
     private static void PrintTypeInfo(IType type, TypeInfo info, Stat stat, StringBuilder sb)
     {
+        foreach (var evt in info.Events)
+        {
+            PrintEvent(type, evt, sb);
+            stat.LineCount++;
+        }
         foreach (var prop in info.Props)
         {
             PrintProperty(type, prop, sb);
@@ -384,6 +402,29 @@ public class Program
             PrintMethod(type, method, sb);
             stat.LineCount++;
         }
+    }
+
+    private static void PrintEvent(
+        IType type,
+        IEvent evt,
+        StringBuilder sb
+    )
+    {
+        sb.Append(type.FullName);
+        sb.Append(" ");
+        sb.Append(Access(evt.Accessibility));
+        sb.Append(" ");
+        if (evt.IsStatic)
+        {
+            sb.Append("static");
+            sb.Append(" ");
+        }
+        sb.Append("event");
+        sb.Append(" ");
+        PrintType(sb, evt.ReturnType);
+        sb.Append(" ");
+        sb.Append(evt.Name);
+        sb.AppendLine();
     }
 
     private static void PrintEnumField(
