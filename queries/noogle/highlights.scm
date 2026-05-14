@@ -50,6 +50,8 @@
 [
  "get"
  "set"
+ "add"
+ "remove"
  "enum"
  "event"
  ".ctor"

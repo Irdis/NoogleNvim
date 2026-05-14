@@ -620,6 +620,10 @@
     "named": false
   },
   {
+    "type": "add",
+    "named": false
+  },
+  {
     "type": "character_literal_content",
     "named": true
   },
@@ -686,6 +690,10 @@
   {
     "type": "real_literal",
     "named": true
+  },
+  {
+    "type": "remove",
+    "named": false
   },
   {
     "type": "set",

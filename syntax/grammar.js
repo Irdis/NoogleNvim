@@ -111,6 +111,7 @@ module.exports = grammar({
       "event",
       field("event_type", $.type),
       field("name", $.def_name),
+      "{", "add", ";", "remove", ";", "}"
     ),
 
     type_list: $ => choice(
