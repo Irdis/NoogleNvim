@@ -424,7 +424,7 @@ public class Program
         PrintType(sb, evt.ReturnType);
         sb.Append(" ");
         sb.Append(evt.Name);
-        sb.Append(" { add; remove; }"
+        sb.Append(" { add; remove; }");
         sb.AppendLine();
     }
 
