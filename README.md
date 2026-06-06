@@ -9,9 +9,6 @@ A Neovim plugin that lets you quickly explore types in .NET libraries. Noogle sc
 ``` lua
 {
     "Irdis/NoogleNvim",
-    build = function ()
-        require("noogle").build()
-    end,
     config = function()
         require("noogle").setup()
 
