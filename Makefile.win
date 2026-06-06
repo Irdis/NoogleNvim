@@ -1,21 +1,18 @@
 all: main
 
-build/nob.exe:
-	cl /Fe:build\nob.exe nob.c
-
-main: build/nob.exe
-	build\nob.exe
+main:
+	$(MAKE) -C syntax
+	$(MAKE) -C net
 
 clean:
-	del *.exe *.exp *.lib *.obj *.dll *.pdb *.idb *.ilk *.log *.old
-	rmdir /s /q build
-	mkdir build
-	type nul > build\.gitkeep
+	$(MAKE) -C syntax clean
+	$(MAKE) -C net clean
 
 publish:
 	rmdir /s /q release\win
 	mkdir release\win
-	copy build\swimd.dll release\win\\
-	copy build\git2.dll release\win\\
-	copy build\version release\win\\
-	type nul > release\win\.gitkeep
+	mkdir release\win\tool
+	mkdir release\win\parser
+	copy net\bin\noogle.exe release\win\tool\\
+	copy syntax\noogle.dll release\win\parser\\
+	copy version release\win\\

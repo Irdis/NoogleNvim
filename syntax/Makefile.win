@@ -1,5 +1,6 @@
 treesitter:
-	echo "not implemented"
+	tree-sitter generate
+	cl /LD src\parser.c /Fe:noogle.dll
 
 clean:
-	echo "not implemented"
+	del *.exp *.lib *.obj *.dll

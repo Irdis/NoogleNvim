@@ -133,6 +133,7 @@ end
 
 M.setup = function(config)
     M.ensure_build()
+    M.setup_treesitter()
 
     M.noogle_path = M.get_tool_path()
 
@@ -152,6 +153,13 @@ M.setup = function(config)
     if config.additional_locations then
         M.additional_locations = config.additional_locations
     end
+end
+
+M.setup_treesitter = function ()
+    vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'noogle',
+        callback = function() vim.treesitter.start() end
+    })
 end
 
 M.noogle_type = function (args)

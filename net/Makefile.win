@@ -1,2 +1,7 @@
 all: 
-	echo "not implemented"
+	dotnet publish -r win-x64 -c Release -o ./bin
+
+clean:
+	if exist bin rmdir /s /q bin
+	if exist obj rmdir /s /q obj
+
