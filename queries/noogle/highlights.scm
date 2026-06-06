@@ -25,6 +25,9 @@
 (property_signature
   name: (def_name) @property.definition)
 
+(event_signature
+  name: (def_name) @property.definition)
+
 (path 
   class: (identifier) @type)
 
@@ -47,7 +50,10 @@
 [
  "get"
  "set"
+ "add"
+ "remove"
  "enum"
+ "event"
  ".ctor"
 ] @keyword
 

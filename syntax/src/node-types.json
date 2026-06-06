@@ -197,6 +197,42 @@
     }
   },
   {
+    "type": "event_signature",
+    "named": true,
+    "fields": {
+      "event_type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "def_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "accessibility",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "generic_type",
     "named": true,
     "fields": {},
@@ -416,6 +452,10 @@
           "named": true
         },
         {
+          "type": "event_signature",
+          "named": true
+        },
+        {
           "type": "method_signature",
           "named": true
         },
@@ -580,6 +620,10 @@
     "named": false
   },
   {
+    "type": "add",
+    "named": false
+  },
+  {
     "type": "character_literal_content",
     "named": true
   },
@@ -590,6 +634,10 @@
   {
     "type": "escape_sequence",
     "named": true
+  },
+  {
+    "type": "event",
+    "named": false
   },
   {
     "type": "false",
@@ -642,6 +690,10 @@
   {
     "type": "real_literal",
     "named": true
+  },
+  {
+    "type": "remove",
+    "named": false
   },
   {
     "type": "set",

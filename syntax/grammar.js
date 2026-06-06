@@ -41,6 +41,7 @@ module.exports = grammar({
       $.property_signature,
       $.method_signature,
       $.enum_signature,
+      $.event_signature,
     ),
 
     property_signature: $ => seq(
@@ -102,6 +103,15 @@ module.exports = grammar({
       ".",
       field("field", $.identifier),
       optional(seq("=", $.default_value))
+    ),
+
+    event_signature: $ => seq(
+      $.accessibility,
+      optional("static"),
+      "event",
+      field("event_type", $.type),
+      field("name", $.def_name),
+      "{", "add", ";", "remove", ";", "}"
     ),
 
     type_list: $ => choice(
