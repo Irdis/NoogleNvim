@@ -1,0 +1,7 @@
+all: 
+	dotnet publish -r linux-x64 -c Release -o ./bin
+
+clean:
+	rm -rf ./bin
+	rm -rf ./obj
+

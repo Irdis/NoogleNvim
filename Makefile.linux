@@ -1,0 +1,17 @@
+all: main
+
+main:
+	$(MAKE) -C syntax
+	$(MAKE) -C net
+
+clean:
+	$(MAKE) -C syntax clean
+	$(MAKE) -C net clean
+
+publish:
+	rm -rf release/linux/*
+	mkdir release/linux/tool
+	mkdir release/linux/parser
+	cp net/bin/noogle release/linux/tool
+	cp syntax/noogle.so release/linux/parser
+	cp version release/linux/

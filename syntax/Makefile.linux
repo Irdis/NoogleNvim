@@ -1,0 +1,6 @@
+treesitter:
+	tree-sitter generate
+	gcc -fPIC -shared src/parser.c -o noogle.so
+
+clean:
+	rm -f noogle.so

@@ -3,38 +3,75 @@ local M = {}
 M.noogle_path = nil
 M.additional_locations = {}
 
-M.build = function()
+M.ensure_build = function()
     if M.noogle_exist_and_version_match() then
         return
     end
-    local net_dir = M.get_net_dir()
-    local has_dotnet = vim.fn.executable('dotnet') == 1
 
-    if not has_dotnet then
-        M.log('dotnet is not found. It is required to build the noogle binary. ' ..
-            'Install it from https://dotnet.microsoft.com/en-us/download')
-        return
-    end
-    M.log('Building, please wait...')
-    local build_script
+    M.log('Updating binaries...')
+
+    local plugin_root = M.plugin_root()
+    local release_folder = M.release_folder()
+
+    local build_folder = plugin_root .. 'build/'
+    local release_tool =  release_folder .. 'tool/'
+    M.clean_dir(build_folder)
+    M.copy_folder_content(release_tool, build_folder);
+
+    local parser_folder = plugin_root .. 'parser/'
+    local release_parser = release_folder .. 'parser/'
+    M.clean_dir(parser_folder)
+    M.copy_folder_content(release_parser, parser_folder);
+
+    local old_version = release_folder .. 'version'
+    local new_version = plugin_root .. 'build/version'
+    M.copy_file(old_version, new_version)
+
     if M.is_linux() then
-        build_script = {'bash', 'build.sh'}
-    else
-        build_script = {'build.bat'}
+        vim.fn.system({ "chmod", "+x", plugin_root .. "build/noogle" })
     end
-    vim.system(build_script, { cwd = net_dir }, function(result)
-        if result.code ~= 0 then
-            M.log('Failed to build dotnet binary: ' .. (result.stdout or 'unknown error'))
-            return
-        end
-        local noogle_path = M.get_noogle_path()
-        if not M.file_exists(noogle_path) then
-            M.log('Unknown error, noogle binary was not found ' .. noogle_path)
-            return
-        end
-        M.log('noogle binary built successfully!')
-    end)
+
+    M.log('Binaries updated')
 end
+
+M.clean_dir = function (path)
+    local files = vim.fn.readdir('.')
+    for _, file in ipairs(files) do
+        if file ~= "." and file ~= ".." then
+            local file_path = path .. '/' .. file
+            os.remove(file_path)
+        end
+    end
+end
+
+M.copy_folder_content = function (source_path, dest_path)
+    M.log('copying ' .. source_path .. ' -> ' .. dest_path)
+    local files = vim.fn.readdir(source_path)
+    for _, file in ipairs(files) do
+        if file ~= "." and file ~= ".." then
+            local source_file_path = source_path .. file
+            local dest_file_path = dest_path .. file
+            M.copy_file(source_file_path, dest_file_path)
+        end
+    end
+end
+
+M.copy_file = function(source_path, dest_path)
+    local input_file = io.open(source_path, "rb")
+    if not input_file then return nil, "Source file not found" end
+
+    local output_file = io.open(dest_path, "wb")
+    if not output_file then
+        input_file:close()
+        return nil, "Cannot open destination file"
+    end
+
+    output_file:write(input_file:read("a"))
+
+    output_file:close()
+    input_file:close()
+end
+
 
 M.is_linux = function ()
     local os_name = vim.loop.os_uname().sysname
@@ -42,29 +79,30 @@ M.is_linux = function ()
 end
 
 M.noogle_exist_and_version_match = function ()
-    local noogle_path = M.get_noogle_path()
-    if not M.file_exists(noogle_path) then
+    local tool_path = M.get_tool_path()
+    if not M.file_exists(tool_path) then
         return false
     end
 
-    local net_dir = M.get_net_dir()
+    local plugin_root = M.plugin_root()
 
-    local original_version_file = net_dir .. 'bin/version'
+    local original_version_file = plugin_root .. 'build/version'
     if not M.file_exists(original_version_file) then
         return false
     end
 
     local original_version = vim.fn.readfile(original_version_file)
 
-    local new_version_file = net_dir .. 'version'
+    local release_folder = M.release_folder()
+    local new_version_file = release_folder .. 'version'
     local new_version = vim.fn.readfile(new_version_file)
 
     return original_version[1] == new_version[1]
 end
 
-M.get_noogle_path = function ()
-    local net_dir = M.get_net_dir()
-    net_dir = net_dir .. 'bin/'
+M.get_tool_path = function ()
+    local net_dir = M.plugin_root()
+    net_dir = net_dir .. 'build/'
     if M.is_linux() then
         net_dir = net_dir .. 'noogle'
     else
@@ -73,16 +111,30 @@ M.get_noogle_path = function ()
     return net_dir
 end
 
-M.get_net_dir = function ()
-    local plugin_dir = vim.fn.fnamemodify(debug.getinfo(1, 'S').source:sub(2), ':h:h')
-    local net_dir = plugin_dir .. '/../net/'
-    return net_dir
+M.release_folder = function ()
+    local release = M.plugin_root() .. 'release/';
+    if M.is_linux() then
+        release = release .. 'linux/'
+    else
+        release = release .. 'win/'
+    end
+    return release
+end
+
+M.plugin_root = function ()
+    return M.plugin_dir() .. '../../';
+end
+
+M.plugin_dir = function ()
+    local source = debug.getinfo(1, "S").source:sub(2)
+    local plugin_dir = vim.fn.fnamemodify(source, ":p:h")
+    return plugin_dir .. '/'
 end
 
 M.setup = function(config)
-    M.setup_grammar()
+    M.ensure_build()
 
-    M.noogle_path = M.get_noogle_path()
+    M.noogle_path = M.get_tool_path()
 
     vim.api.nvim_create_user_command("Noogle", M.run_cmd, { nargs = "*", })
 
@@ -100,23 +152,6 @@ M.setup = function(config)
     if config.additional_locations then
         M.additional_locations = config.additional_locations
     end
-end
-
-M.setup_grammar = function ()
-    vim.api.nvim_create_autocmd('User',
-    {
-        pattern = 'TSUpdate',
-        callback = function()
-            local parser_config = require("nvim-treesitter.parsers")
-            parser_config.noogle = {
-                install_info = {
-                    url = "https://github.com/Irdis/NoogleNvim.git",
-                    location = 'syntax',
-                    branch = "main"
-                }
-            }
-        end
-    })
 end
 
 M.noogle_type = function (args)
