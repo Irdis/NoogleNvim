@@ -354,7 +354,7 @@ public class Program
     private static void PrintUsage(TextWriter tw)
     {
         tw.WriteLine("noogle [args]:");
-        tw.WriteLine("    -p <path1,path2 ...>: path(s)");
+        tw.WriteLine("    -p <path1;path2 ...>: path(s)");
         tw.WriteLine("    -l <library1>:        library");
         tw.WriteLine("    -t <type1>:           type name");
         tw.WriteLine("    -m <member1>:         member name (method, property, etc.)");
